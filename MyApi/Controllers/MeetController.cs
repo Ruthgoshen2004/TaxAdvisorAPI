@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR.Protocol;
 using MyApi.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,29 +10,26 @@ namespace MyApi.Controllers
     [ApiController]
     public class MeetController : ControllerBase
     {
-        public static List<Meeting> meeting = new List<Meeting>
+       private readonly DataContext _dataContext;
+        public MeetController(DataContext dataContext)
         {
-            new Meeting
-            {
-                    Date="09/07/23",
-                    Hour="23:00",
-                   Durationofmeeting1=45
-            }
-        };
+            _dataContext = dataContext;
+        }
+
         // GET: api/<MeetController>
         [HttpGet]
         public IEnumerable<Meeting> Get()
         {
-            return meeting;
+            return _dataContext.meeting;
         }
 
         // GET api/<MeetController>/5
         [HttpGet("{id}")]
-        public ActionResult <Meeting> Get(string Hour)
+        public ActionResult <Meeting> Get(int IDmeet2)
         {
-            if (Hour is null)
+            if (IDmeet2 is 0)
                 return NotFound();
-            Meeting meet=meeting.Find(e=> e.Hour==Hour);
+            Meeting meet= _dataContext.meeting.Find(e => e.IDmeet == IDmeet2);
             if (meet is null)
                 return NotFound();
             return meet;
@@ -42,7 +40,7 @@ namespace MyApi.Controllers
         [HttpPost]
         public void Post([FromBody] Meeting meet)
         {
-               meeting.Add(meet);
+            _dataContext.meeting.Add(meet);
         }
 
         // PUT api/<MeetController>/5
@@ -51,11 +49,15 @@ namespace MyApi.Controllers
         {
             if (meet is null)
                 return NotFound();
-            Meeting m=meeting.Find(e=> e==meet);
+            Meeting m= _dataContext.meeting.Find(e=> e==meet);
             if (m is null)
                 return NotFound();
+            m.CastomerId = meet.CastomerId;
+            m.IDmeet=meet.IDmeet;
             m.Hour = meet.Hour;
             m.Durationofmeeting1 = meet.Durationofmeeting1;
+            m.Date=meet.Date;
+            m.TaxAdvisorId=meet.TaxAdvisorId;
             return NoContent();
         }
 
@@ -63,7 +65,7 @@ namespace MyApi.Controllers
         [HttpDelete("{id}")]
         public void Delete(Meeting meet)
         {
-            meeting.Add(meet);
+            _dataContext.meeting.Add(meet);
         }
     }
 }

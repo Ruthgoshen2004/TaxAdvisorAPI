@@ -10,28 +10,24 @@ namespace MyApi.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        public static List<Castomer> castomers = new List<Castomer>
+        private readonly DataContext _dataContext;
+        public CustomerController(DataContext dataContext)
         {
-            new Castomer
-            {
-                   Status="work",
-                   Id=998767908,
-                  Name="ruth",
-                   Age=56
-            }
-        };
+            _dataContext = dataContext;
+        }
+
         // GET: api/<MyController>
         [HttpGet]
         public List<Castomer> Get()
         {
-            return castomers;
+            return _dataContext.castomers;
         }
 
         // GET api/<MyController>/5
         [HttpGet("{id}")]
         public ActionResult <Castomer> Get(int id)
         {
-            Castomer castomer = castomers.Find(e=> e.Id==id);
+            Castomer castomer = _dataContext.castomers.Find(e=> e.Id==id);
             if (castomer is null)
                 return NotFound();
             return castomer;
@@ -41,7 +37,7 @@ namespace MyApi.Controllers
         [HttpPost]
         public void Post([FromBody] Castomer castomer)
         {
-            castomers.Add(castomer);
+            _dataContext.castomers.Add(castomer);
 
         }
 
@@ -51,7 +47,7 @@ namespace MyApi.Controllers
         {
             if (castomer is null)
                 return NotFound();
-            Castomer cs=castomers.Find(e=> e.Id==id);
+            Castomer cs= _dataContext.castomers.Find(e=> e.Id==id);
             if (cs is null)
                 return BadRequest();
             else
@@ -61,15 +57,15 @@ namespace MyApi.Controllers
             return NoContent();
         }
         [HttpPut("{id}")]
-        public IActionResult Put(int id,string status, [FromBody] Castomer castomer)
+        public IActionResult Put(int id,bool status, [FromBody] Castomer castomer)
         {
             if (castomer is null)
                 return NotFound();
-            Castomer cs = castomers.Find(e => e.Id == id);
+            Castomer cs = _dataContext.castomers.Find(e => e.Id == id);
             if (cs is null)
                 return BadRequest();
             else
-                cs.Status=status;
+                cs.Status= status;
             return NoContent();
         }
 
@@ -78,8 +74,8 @@ namespace MyApi.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            Castomer c=castomers.Find(e=> e.Id==id);
-            castomers.Remove(c);
+            Castomer c= _dataContext.castomers.Find(e=> e.Id==id);
+            _dataContext.castomers.Remove(c);
 
         }
 

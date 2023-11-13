@@ -1,3 +1,5 @@
+using MyApi;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,6 +10,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+builder.Services.AddScoped<DataContext>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -9,28 +9,26 @@ namespace MyApi.Controllers
     [ApiController]
     public class TaxAdvisorController : ControllerBase
     {
-        // GET: api/<TaxAdvisorController>
-        public static List<TaxAdvisor> taxAdvisors = new List<TaxAdvisor>
+        private readonly DataContext _dataContext;
+
+        public  TaxAdvisorController(DataContext context)
         {
-            new TaxAdvisor
-            {
-                   Id=998767908,
-                  Name="ruth",
-                   Age=56
-            }
-        };
+            _dataContext = context;
+        }
+        // GET: api/<TaxAdvisorController>
+        
         // GET: api/<MyController>
         [HttpGet]
         public List<TaxAdvisor> Get()
         {
-            return taxAdvisors;
+            return _dataContext.taxadvisors;
         }
 
         // GET api/<MyController>/5
         [HttpGet("{id}")]
         public ActionResult<TaxAdvisor> Get(int id)
         {
-            TaxAdvisor taxAdvisorst = taxAdvisors.Find(e => e.Id == id);
+            TaxAdvisor taxAdvisorst = _dataContext.taxadvisors.Find(e => e.Id == id);
             if (taxAdvisorst is null)
                 return NotFound();
             return taxAdvisorst;
@@ -40,7 +38,7 @@ namespace MyApi.Controllers
         [HttpPost]
         public void Post([FromBody] TaxAdvisor taxAdvisors1)
         {
-            taxAdvisors.Add(taxAdvisors1);
+            _dataContext.taxadvisors.Add(taxAdvisors1);
 
         }
 
@@ -50,7 +48,7 @@ namespace MyApi.Controllers
         {
             if (taxAdvisors1 is null)
                 return NotFound();
-            TaxAdvisor cs = taxAdvisors.Find(e => e.Id == id);
+            TaxAdvisor cs = _dataContext.taxadvisors.Find(e => e.Id == id);
             if (cs is null)
                 return BadRequest();
             else
@@ -60,11 +58,11 @@ namespace MyApi.Controllers
             return NoContent();
         }
         [HttpPut("{id}")]
-        public IActionResult Put(int id, string status,[FromBody] TaxAdvisor taxAdvisors1)
+        public IActionResult Put(int id, bool status,[FromBody] TaxAdvisor taxAdvisors1)
         {
             if (taxAdvisors1 is null)
                 return NotFound();
-            TaxAdvisor cs = taxAdvisors.Find(e => e.Id == id);
+            TaxAdvisor cs = _dataContext.taxadvisors.Find(e => e.Id == id);
             if (cs is null)
                 return BadRequest();
             else
@@ -75,8 +73,8 @@ namespace MyApi.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            TaxAdvisor c = taxAdvisors.Find(e => e.Id == id);
-            taxAdvisors.Remove(c);
+            TaxAdvisor c = _dataContext.taxadvisors.Find(e => e.Id == id);
+            _dataContext.taxadvisors.Remove(c);
 
         }
     }
